@@ -1,0 +1,7 @@
+Play mustache template renderer
+=================================
+
+In play module configuration add the following binding:
+```
+     MustacheRenderer -> MustacheRendererImpl
+```
