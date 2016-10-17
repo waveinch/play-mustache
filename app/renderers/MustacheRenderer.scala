@@ -1,4 +1,4 @@
-package paerke.renderers
+package renderers
 
 import scala.concurrent.{ExecutionContext, Future}
 
