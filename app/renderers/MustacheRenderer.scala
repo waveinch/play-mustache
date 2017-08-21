@@ -24,4 +24,13 @@ trait MustacheRenderer {
     * @return rendered html template
     */
   def render(template: String, scope: Object)(implicit ex:ExecutionContext): Future[String]
+
+  /**
+    * Use this method for templates in memory (ex. coming from DB)
+    *
+    * @param template the whole template in mustache
+    * @param scope    variables to be inserted in the template
+    * @return rendered html template
+    */
+  def renderWithComponents(template: String, components:Map[String,String],scope: Object)(implicit ex:ExecutionContext): Future[String]
 }
