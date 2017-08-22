@@ -2,7 +2,7 @@ name := """play-mustache"""
 
 organization := "ch.wavein"
 
-version := "1.0.0-SNAPSHOT"
+version := "2.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 

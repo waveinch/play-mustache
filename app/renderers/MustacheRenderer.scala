@@ -1,5 +1,7 @@
 package renderers
 
+import play.api.libs.json.JsValue
+
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -33,4 +35,9 @@ trait MustacheRenderer {
     * @return rendered html template
     */
   def renderWithComponents(template: String, components:Map[String,String],scope: Object)(implicit ex:ExecutionContext): Future[String]
+
+  def renderJson(template: String, scope: JsValue)(implicit ex: ExecutionContext): Future[String]
+  def renderJsonWithComponents(template: String, components: Map[String, String], scope: JsValue)(implicit ex: ExecutionContext): Future[String]
+  def renderJsonWithFile(template: String, scope: JsValue)(implicit ex: ExecutionContext): Future[String]
+
 }
