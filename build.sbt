@@ -1,10 +1,20 @@
+import com.typesafe.sbt.GitVersioning
+
 name := """play-mustache"""
 
 organization := "ch.wavein"
 
-version := "2.1-SNAPSHOT"
-
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file("."))
+  .settings(
+    bintrayRepository := "maven",
+    bintrayOrganization := Some("waveinch"),
+    publishMavenStyle := true,
+    licenses += ("Apache-2.0", url("http://www.opensource.org/licenses/apache2.0.php")),
+    git.useGitDescribe := true
+  ).enablePlugins(
+  PlayScala,
+  GitVersioning
+)
 
 scalaVersion := "2.11.7"
 
