@@ -1,11 +1,11 @@
 package renderers
 
 import java.io.{StringReader, StringWriter}
-import javax.inject.Singleton
 
+import javax.inject.Singleton
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.mustachejava.DefaultMustacheFactory
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json._
 import renderers.utils.{InMemoryMustacheResolver, ScalaObjectHandler}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,11 +16,11 @@ import scala.util.Random
   */
 @Singleton
 class MustacheRendererImpl extends MustacheRenderer {
-  override def render(template: String, scope: Object)(implicit ex:ExecutionContext): Future[String] = {
+  def render(template: String, scope: Object)(implicit ex:ExecutionContext): Future[String] = {
     renderWithComponents(template, Map(), scope)
   }
 
-  override def renderFile(template: String, scope: Object)(implicit ex:ExecutionContext): Future[String] = Future{
+  def renderFile(template: String, scope: Object)(implicit ex:ExecutionContext): Future[String] = Future{
     val file = this.getClass.getClassLoader.getResource(template).getPath
     val mf = new DefaultMustacheFactory()
     mf.setObjectHandler(new ScalaObjectHandler())
@@ -40,7 +40,7 @@ class MustacheRendererImpl extends MustacheRenderer {
   override def renderJsonWithFile(template: String, scope: JsValue)(implicit ex: ExecutionContext): Future[String] = renderFile(template,jsValue2Object(scope))
 
 
-  override def renderWithComponents(template: String, components: Map[String, String], scope: Object)(implicit ex: ExecutionContext): Future[String] = Future{
+  def renderWithComponents(template: String, components: Map[String, String], scope: Object)(implicit ex: ExecutionContext): Future[String] = Future{
     val reader = new StringReader(template)
     val mf = new DefaultMustacheFactory(new InMemoryMustacheResolver(components))
     mf.setObjectHandler(new ScalaObjectHandler())
@@ -63,7 +63,34 @@ class MustacheRendererImpl extends MustacheRenderer {
   }
 
   def jsValue2Object(json:JsValue):Object = {
-    toMustacheParsableObj(Json.stringify(json))
+    toMustacheParsableObj(Json.stringify(trasformJson(json)))
+  }
+
+
+  def obj2js(name:String,json:JsValue): Seq[(String,JsValue)] = json match {
+    case JsObject(underlying) => {
+      val fields:JsObject = JsObject(underlying.flatMap{case (s,d) => obj2js(s,d) })
+      val data = Json.obj("isEmpty" -> underlying.isEmpty, "nonEmpty" -> underlying.nonEmpty, "size" -> underlying.size ) ++ fields
+      Seq((name,data))
+    }
+    case JsArray(value) => {
+      Seq(
+        (name,JsArray(value.map(trasformJson))),
+        (s"${name}_props",Json.obj("isEmpty" -> value.isEmpty, "nonEmpty" -> value.nonEmpty, "size" -> value.size))
+      )
+    }
+    case _ => Seq((name,json))
+  }
+
+
+  override def trasformJson(json:JsValue):JsValue = json match {
+    case JsObject(underlying) => {
+      Json.obj("isEmpty" -> underlying.isEmpty, "nonEmpty" -> underlying.nonEmpty, "size" -> underlying.size ) ++ JsObject(underlying.flatMap{ case (s,d) => obj2js(s,d)})
+    }
+    case JsArray(value) => {
+      JsArray(value.map(trasformJson))
+    }
+    case _ => json
   }
 
 }
