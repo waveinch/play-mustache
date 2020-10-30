@@ -5,8 +5,9 @@ import java.io.{StringReader, StringWriter}
 import javax.inject.Singleton
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.mustachejava.DefaultMustacheFactory
+import com.twitter.mustache.ScalaObjectHandler
 import play.api.libs.json._
-import renderers.utils.{InMemoryMustacheResolver, ScalaObjectHandler}
+import renderers.utils.InMemoryMustacheResolver
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random

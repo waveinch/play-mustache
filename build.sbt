@@ -16,10 +16,11 @@ lazy val root = (project in file("."))
   GitVersioning
 )
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.13.3"
 
 libraryDependencies ++= Seq(
-  "com.github.spullara.mustache.java" % "compiler" % "0.9.5",
-  "org.scalatest" %% "scalatest" % "3.0.1" % Test
+  "com.github.spullara.mustache.java" % "compiler" % "0.9.7",
+  "com.github.spullara.mustache.java" % "scala-extensions-2.13" % "0.9.7",
+  "org.scalatest" %% "scalatest" % "3.2.0" % Test
 )
 

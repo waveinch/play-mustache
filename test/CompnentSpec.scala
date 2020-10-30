@@ -1,14 +1,25 @@
-import org.scalatest.FlatSpec
-import org.scalatest.concurrent.ScalaFutures
 import renderers.MustacheRendererImpl
-import org.scalatest._
-import Matchers._
-
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class CompnentSpec extends FlatSpec with ScalaFutures {
+import org.scalatest.flatspec.{AsyncFlatSpec}
+import org.scalatest.matchers.should.Matchers._
 
 
+class CompnentSpec extends AsyncFlatSpec  {
+
+
+  "A template with map" should "be rendered" in {
+    val mustacheRenderer = new MustacheRendererImpl
+
+    val page ="test {{test.obj}}"
+
+
+
+    mustacheRenderer.render(page,Map("test" -> Map("obj" -> "ok"))).map{ result =>
+      println(s"result:$result, template: $page" )
+      result shouldBe "test ok"
+    }
+
+
+  }
 
   "A template with component" should "be rendered" in {
     val mustacheRenderer = new MustacheRendererImpl
@@ -17,7 +28,7 @@ class CompnentSpec extends FlatSpec with ScalaFutures {
 
     val component = "ok"
 
-    whenReady(mustacheRenderer.renderWithComponents(page,Map("component" -> component),null)) { result =>
+    mustacheRenderer.renderWithComponents(page,Map("component" -> component),null).map{ result =>
       println(s"result:$result, template: $page" )
       result shouldBe "test ok"
     }
